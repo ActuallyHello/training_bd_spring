@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 public interface AttributeRepo extends JpaRepository<Attribute, Long> {
 
@@ -25,4 +26,11 @@ public interface AttributeRepo extends JpaRepository<Attribute, Long> {
             nativeQuery = true
     )
     void restartSequence();
+
+    @Query(
+            value = "SELECT id_attribute, name_attribute, id_entity FROM attribute a where a.id_entity = ?1",
+            nativeQuery = true
+    )
+    List<Attribute> findAttributeByIdEntity(Long IdEntity);
+
 }

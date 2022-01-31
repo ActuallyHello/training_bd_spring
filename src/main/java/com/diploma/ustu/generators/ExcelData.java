@@ -9,10 +9,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class ExcelData {
@@ -64,8 +61,19 @@ public class ExcelData {
                     findColumnWithKey(key, sheet),
                     sheet);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println("NOTHING HERE");
+            //ex.printStackTrace();
         }
         return dataList;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(getTestDataByKey("имя"));
+        System.out.println(getTestDataByKey("сотрудник"));
+        System.out.println(getTestDataByKey("ALOHA"));
+//        String kok = "id";
+//        String kok2 = "Имя_ывфывф";
+//        System.out.println(kok2.toLowerCase(Locale.ROOT).replaceAll("_.+|\\s.+", ""));
+//        System.out.println(kok.toLowerCase(Locale.ROOT).replaceAll("_.+|\\s.+", ""));
     }
 }

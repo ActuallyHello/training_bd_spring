@@ -50,4 +50,14 @@ class AttributeRepoTest {
         attributeRepo.updateAttributeEntityId(1L, 3L);
         attributeRepo.updateAttributeEntityId(2L, 3L);
     }
+
+    @Test
+    public void testFindAll() {
+        System.out.println("attributeRepo.findAll() = " + attributeRepo.findAll());
+    }
+
+    @Test
+    public void testFindAllByEntity() {
+        System.out.println(attributeRepo.findAttributeByIdEntity(3L));
+    }
 }

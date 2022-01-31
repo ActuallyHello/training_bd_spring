@@ -29,13 +29,13 @@ class EntityOfRepoTest {
 
     @Test
     public void testAddEntityWithAttributes() {
-        Attribute attribute = new Attribute("Колесо");
-        Attribute attribute2 = new Attribute("Двигатель");
-        Attribute attribute3 = new Attribute("Дверь");
+        Attribute attribute = new Attribute("id");
+        Attribute attribute2 = new Attribute("Имя сотрудника");
+        Attribute attribute3 = new Attribute("Должность");
         List<Attribute> attributes = new ArrayList<>(Arrays.asList(attribute, attribute2, attribute3));
         System.out.println("attributes = " + attributes);
 
-        EntityOf entity = new EntityOf("Супер тачка");
+        EntityOf entity = new EntityOf("Сотрудник");
         entity.setAttributes(attributes);
 
         entityOfRepo.save(entity);
@@ -46,4 +46,13 @@ class EntityOfRepoTest {
         entityOfRepo.deleteByIdEntity(2L);
     }
 
+    @Test
+    public void testFindAll() {
+        System.out.println("entityOfRepo.findAll() = " + entityOfRepo.findAll());
+    }
+
+    @Test
+    public void testFindOne() {
+        System.out.println("entityOfRepo.findOne(3) = " + entityOfRepo.findByIdEntity(3L).orElse(null));
+    }
 }
