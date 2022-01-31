@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class EntityOf {
+public class EntityDB {
 
     @Id
     @SequenceGenerator(
@@ -41,7 +41,7 @@ public class EntityOf {
     )
     private List<Attribute> attributes;
 
-    public EntityOf(String nameEntity) {
+    public EntityDB(String nameEntity) {
         this.nameEntity = nameEntity;
     }
 

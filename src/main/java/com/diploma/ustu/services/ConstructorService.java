@@ -2,13 +2,15 @@ package com.diploma.ustu.services;
 
 import com.diploma.ustu.generators.ExcelData;
 import com.diploma.ustu.models.Entities.Attribute;
-import com.diploma.ustu.models.Entities.EntityOf;
+import com.diploma.ustu.models.Entities.EntityDB;
 import com.diploma.ustu.repo.AttributeRepo;
-import com.diploma.ustu.repo.EntityOfRepo;
+import com.diploma.ustu.repo.EntityDBRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /*
  *  Построение денормализованных данных посредством соединения нормализованных
@@ -18,55 +20,87 @@ import java.util.*;
 public class ConstructorService {
 
     @Autowired
-    private EntityOfRepo entityOfRepo;
+    private EntityDBRepo entityDBRepo;
 
     @Autowired
     private AttributeRepo attributeRepo;
 
+    //TODO:
+    // 1. Отсортированные сущности заполнить данными
+    // 2. Каждому FK присвоить соответсвующее значение id из таблицы на которую ссылаются
+
+
     /*
      * Существует структура хранения сущности, её атрибутов и значение этих атрибутов
-     * Представлена в виде мапы, ключ который хранит сущность, которая ссылается на несколько своих атрибутов
+     * Представлена в виде мапы, ключ которой хранит сущность, которая ссылается на несколько своих атрибутов
      * значение ключа мапа в которой ключом выступает название атрибута, а значением лист значений для этих атрибутов
-     * сущность - Сотрудник, атрибуты - Сотрудник[id, имя, должность]
-     * значения для каждого атрибута id: [1,2,3], имя: [Артём, Валера, Саша] , должность: [Инженер, Инженер, Директор]
+     * сущность - Сотрудник, атрибуты - Сотрудник = [id = [1,2,3], имя = [Артём, Валера, Саша], должность = [Инженер, Инженер, Директор]]
      * Map<Сотрудник, (Map<id, [1,2,3]>,Map<имя,[...], ...)
+     * Map<EntityDB, Map<Attribute, List<String>>> mapEntityAttributesValues
      */
-    private Map<EntityOf, Map<Attribute, List<String>>> entities_attributes_values = new HashMap<>();
-    private Map<String, Map<String, List<String>>> testik = new HashMap<>();
+    private Map<EntityDB, Map<Attribute, List<String>>> mapEntityAttributesValues = new HashMap<>();
 
-    public void test() {
-        String[] entities = {"1 entity"};
-        String[] attributes = {"1.1 attribute", "1.2 attribute"};
-
-        for (String entity : entities) {
-            testik.put(entity, new HashMap<>());
-            for (Map<String, List<String>> entry : testik.values()) {
-                for (String attribute : attributes) {
-                    entry.put(attribute, null);
-                }
-            }
-        }
-        System.out.println(testik);
+    /*
+     *  на входе получает сущность, которую ищет в mapEntityAttributeValues
+     *  преобразует результат в stream<Attribute>
+     *  считаем сколько совпадений с 'fk_' или 'fk '
+     */
+    private int countForeignKeys(EntityDB entityKey) {
+        return (int) mapEntityAttributesValues.get(entityKey)
+                .keySet()
+                .stream()
+                .map(Attribute::getNameAttribute)
+                .filter(x -> x.toLowerCase(Locale.ROOT).contains("fk_") ||
+                        x.toLowerCase(Locale.ROOT).contains("fk "))
+                .count();
     }
 
+    /*
+     * сортируем по возрастанию мапу по условию возрастания количества FK
+     */
+    private void sortMapByFKNaturalOrder() {
+        // https://stackoverflow.com/questions/58998826/java-stream-collect-to-treemap-in-reverse-order
+        // 4 параметр, который можно кастамизировать под сортировку всей структуры мапы
+        Supplier<TreeMap<EntityDB, Map<Attribute, List<String>>>> myMapSupplier = () -> new TreeMap<>((o1, o2) -> {
+            int count_o1 = countForeignKeys(o1);
+            int count_o2 = countForeignKeys(o2);
+            return count_o1 - count_o2;
+        });
 
+        mapEntityAttributesValues = mapEntityAttributesValues.entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (a, b) -> a,
+                        myMapSupplier
+                ));
+    }
 
-    public void construct() {
-        List<EntityOf> entityOfList = entityOfRepo.findAll(); // получаем все сущности определенной модели
-        for (EntityOf entity : entityOfList) { // итерируемся по каждой
-            entities_attributes_values.put(entity, new HashMap<>()); // кладём ключ и создаем для него новую структуру
+    /*
+     *  получаем все сущности модели
+     *  каждую устанавливаем ключом
+     *  получаем ее атрибуты
+     *  каждый атрибут делаем ключом во внутрнней коллекции
+     *  каждому атрибуту присваиваем лист значений с экселя
+     *  сортируем
+     */
+    public void collectEntities() {
+        List<EntityDB> entityDBList = entityDBRepo.findAll(); // получаем все сущности определенной модели
+        for (EntityDB entity : entityDBList) { // итерируемся по каждой
+            mapEntityAttributesValues.put(entity, new HashMap<>()); // кладём ключ и создаем для него новую структуру
             List<Attribute> attributeList = attributeRepo.findAttributeByIdEntity(entity.getIdEntity()); // получаем все атрибуты по определенной сущности
-            Map<Attribute, List<String>> entry = entities_attributes_values.get(entity);
-            for (Attribute attribute : attributeList) {
+            Map<Attribute, List<String>> entry = mapEntityAttributesValues.get(entity); // обращаемся от Entity к мапе, содержащей Attribute, List<String>
+            for (Attribute attribute : attributeList) { // для каждого имени атрибута (по каждому первому слову разделенного либо ' ' либо '_' получаем значение из excel
                 List<String> excel_data = ExcelData.getTestDataByKey(attribute.getNameAttribute().toLowerCase(Locale.ROOT).replaceAll("_.+|\\s.+", ""));
-                entry.put(attribute, excel_data);
+                entry.put(attribute, excel_data); // добавляем к атрибуту его значения
             }
-//            for (Map<Attribute, List<String>> first_entry : entities_attributes_values.values()) { // в только что созданном ключе
-//                for (Attribute attribute : attributeList) {
-//                    first_entry.put(attribute, new ArrayList<>());
-//                }
-//            }
         }
-        System.out.println(entities_attributes_values);
+        sortMapByFKNaturalOrder();
+        System.out.println(mapEntityAttributesValues);
     }
+
+    // другой путь - создать класс с сущностью и ее атрибутами
+    // сделать список объектов этого класса, в котором реализовать метод подсчёт FK
+    // Collections.sort(cached_entityWithAttributesList, Comparator.comparingInt(EntityWithAttributes::countFK));
 }

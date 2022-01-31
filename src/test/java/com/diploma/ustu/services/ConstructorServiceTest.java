@@ -18,7 +18,8 @@ class ConstructorServiceTest {
 
     @Test
     public void testIsItWork() {
-        //constructorService.test();
+//        constructorService.countForeignKeys();
+        //constructorService.testCountFKLIST();
         constructorService.construct();
     }
 }
