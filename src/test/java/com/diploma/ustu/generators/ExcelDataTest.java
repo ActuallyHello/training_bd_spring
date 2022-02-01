@@ -16,13 +16,13 @@ class ExcelDataTest {
 
     @Test
     public void testExtractionFromExcel() {
-        List<String> data = ExcelData.getTestDataByKey("id");
+        List<String> data = ExcelData.getTestDataByKey("id", 1);
         Collections.shuffle(data);
         System.out.println("data = " + data);
         Person person = new Person();
-        person.name = ExcelData.getTestDataByKey("firstname");
-        person.surname = ExcelData.getTestDataByKey("lastname");
-        person.lastname = ExcelData.getTestDataByKey("middlename");
+        person.name = ExcelData.getTestDataByKey("firstname", 1);
+        person.surname = ExcelData.getTestDataByKey("lastname", 1);
+        person.lastname = ExcelData.getTestDataByKey("middlename", 1);
         System.out.println(person);
     }
 

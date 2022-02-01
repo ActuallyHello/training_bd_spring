@@ -35,12 +35,12 @@ public class ExcelData {
         return -1; // if nothing was found
     }
 
-    private static List<String> getValuesFromExcel(int columnIndex, Sheet sheet) {
+    private static List<String> getValuesFromExcel(int columnIndex, Sheet sheet, int size) {
         List<String> dataList = new ArrayList<>();
         int rowIndex = 1;
         if (columnIndex == -1) return new ArrayList<>();
         Row row = sheet.getRow(rowIndex);
-        while (row != null && row.getCell(columnIndex) != null) {
+        while (row != null && row.getCell(columnIndex) != null && rowIndex <= size) {
             dataList.add(row.getCell(columnIndex).toString());
             rowIndex++;
             row = sheet.getRow(rowIndex);
@@ -52,14 +52,14 @@ public class ExcelData {
     //1. change path to file with classpath
 
     // function will return List of values by the key from excel file
-    public static List<String> getTestDataByKey(String key) {
+    public static List<String> getTestDataByKey(String key, int size) {
         List<String> dataList = new ArrayList<>();
         try (FileInputStream file = new FileInputStream(new File("D:\\ДИПЛОМ\\SpringDiploma\\ustu\\src\\main\\resources\\data\\data.xlsx"))) {
             XSSFWorkbook wb = new XSSFWorkbook(file);
             XSSFSheet sheet = wb.getSheetAt(0);
             dataList = getValuesFromExcel(
                     findColumnWithKey(key, sheet),
-                    sheet);
+                    sheet, size);
         } catch (IOException ex) {
             System.out.println("NOTHING HERE");
             //ex.printStackTrace();
@@ -68,9 +68,9 @@ public class ExcelData {
     }
 
     public static void main(String[] args) {
-        System.out.println(getTestDataByKey("имя"));
-        System.out.println(getTestDataByKey("сотрудник"));
-        System.out.println(getTestDataByKey("ALOHA"));
+        System.out.println(getTestDataByKey("имя", 1));
+        System.out.println(getTestDataByKey("сотрудник", 2));
+        System.out.println(getTestDataByKey("ALOHA", 3));
 //        String kok = "id";
 //        String kok2 = "Имя_ывфывф";
 //        System.out.println(kok2.toLowerCase(Locale.ROOT).replaceAll("_.+|\\s.+", ""));

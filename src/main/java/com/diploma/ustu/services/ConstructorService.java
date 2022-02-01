@@ -92,7 +92,9 @@ public class ConstructorService {
             List<Attribute> attributeList = attributeRepo.findAttributeByIdEntity(entity.getIdEntity()); // получаем все атрибуты по определенной сущности
             Map<Attribute, List<String>> entry = mapEntityAttributesValues.get(entity); // обращаемся от Entity к мапе, содержащей Attribute, List<String>
             for (Attribute attribute : attributeList) { // для каждого имени атрибута (по каждому первому слову разделенного либо ' ' либо '_' получаем значение из excel
-                List<String> excel_data = ExcelData.getTestDataByKey(attribute.getNameAttribute().toLowerCase(Locale.ROOT).replaceAll("_.+|\\s.+", ""));
+                List<String> excel_data = ExcelData.getTestDataByKey(
+                        attribute.getNameAttribute().toLowerCase(Locale.ROOT).replaceAll("_.+|\\s.+", ""),
+                        0);
                 entry.put(attribute, excel_data); // добавляем к атрибуту его значения
             }
         }
@@ -120,6 +122,21 @@ public class ConstructorService {
                 }
             }
         }
+        System.out.println(mapEntityAttributesValues);
+    }
+
+    // для каждой сущности в отдельности
+    public void collectEntity(EntityDB entity, int size) {
+        mapEntityAttributesValues.put(entity, new HashMap<>()); // кладём ключ и создаем для него новую структуру
+        List<Attribute> attributeList = attributeRepo.findAttributeByIdEntity(entity.getIdEntity()); // получаем все атрибуты по определенной сущности
+        Map<Attribute, List<String>> entry = mapEntityAttributesValues.get(entity); // обращаемся от Entity к мапе, содержащей Attribute, List<String>
+        for (Attribute attribute : attributeList) { // для каждого имени атрибута (по каждому первому слову разделенного либо ' ' либо '_' получаем значение из excel
+            List<String> excel_data = ExcelData.getTestDataByKey(
+                    attribute.getNameAttribute().toLowerCase(Locale.ROOT).replaceAll("_.+|\\s.+", ""),
+                    size);
+            entry.put(attribute, excel_data); // добавляем к атрибуту его значения
+        }
+        //sortMapByFKNaturalOrder(); not needed now
         System.out.println(mapEntityAttributesValues);
     }
 }

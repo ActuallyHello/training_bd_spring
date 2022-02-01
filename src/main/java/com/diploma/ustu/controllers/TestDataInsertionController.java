@@ -19,9 +19,9 @@ public class TestDataInsertionController {
 
     @GetMapping
     public List<Person> index() {
-        List<String> names = ExcelData.getTestDataByKey("firstname");
-        List<String> surnames = ExcelData.getTestDataByKey("lastname");
-        List<String> lastnames = ExcelData.getTestDataByKey("middlename");
+        List<String> names = ExcelData.getTestDataByKey("firstname", 1);
+        List<String> surnames = ExcelData.getTestDataByKey("lastname", 2);
+        List<String> lastnames = ExcelData.getTestDataByKey("middlename", 1);
 
         List<Person> persons = new ArrayList<>();
         for (int i = 0; i < surnames.size(); i++) {
