@@ -20,6 +20,7 @@ class ConstructorServiceTest {
     public void testIsItWork() {
 //        constructorService.countForeignKeys();
         //constructorService.testCountFKLIST();
-        constructorService.construct();
+        constructorService.collectEntities();
+        constructorService.insertIdToFK();
     }
 }

@@ -96,11 +96,30 @@ public class ConstructorService {
                 entry.put(attribute, excel_data); // добавляем к атрибуту его значения
             }
         }
-        sortMapByFKNaturalOrder();
+        //sortMapByFKNaturalOrder(); not needed now
         System.out.println(mapEntityAttributesValues);
     }
 
     // другой путь - создать класс с сущностью и ее атрибутами
     // сделать список объектов этого класса, в котором реализовать метод подсчёт FK
     // Collections.sort(cached_entityWithAttributesList, Comparator.comparingInt(EntityWithAttributes::countFK));
+
+
+    public void insertIdToFK() {
+        for (Map.Entry<EntityDB, Map<Attribute, List<String>>> entry : mapEntityAttributesValues.entrySet()) {
+            for (Map.Entry<Attribute, List<String>> innerEntry : entry.getValue().entrySet()) {
+                String attributeName = innerEntry.getKey().getNameAttribute();
+                if (attributeName.contains("fk ") || attributeName.contains("fk_")) {
+                    String entityName = attributeName.toLowerCase(Locale.ROOT).replaceAll("fk_|fk\\s", "");
+                    for (Map.Entry<EntityDB, Map<Attribute, List<String>>> secondEntry: mapEntityAttributesValues.entrySet()) {
+                        if (secondEntry.getKey().getNameEntity().equalsIgnoreCase(entityName)) {
+                            Attribute relatedToFK = secondEntry.getValue().keySet().stream().filter(x -> x.getNameAttribute().startsWith("id")).findFirst().get();
+                            innerEntry.setValue(secondEntry.getValue().get(relatedToFK));
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println(mapEntityAttributesValues);
+    }
 }
