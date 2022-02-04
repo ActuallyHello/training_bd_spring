@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div th:if="${list != null}" th:each="entity : ${list}">
+    <p th:text="${entity}"/>
+</div>
+
+<h1>BEFORE</h1>
+<div th:if="${collected != null}" th:each="collection : ${collected}">
+    <p th:text="${collection}"/>
+</div>
+<h1>AFTER</h1>
+<div th:if="${collectedNEW != null}" th:each="collection : ${collectedNEW}">
+    <p th:text="${collection}"/>
+</div>
+
+<!--<span th:if="${error != null && error.summary != null}" th:text="${error.summary}">Static summary</span>-->
+<!--<div th:if="${list != null}}">-->
+<!--&lt;!&ndash;    <div th:each="entity : ${list}">&ndash;&gt;-->
+<!--&lt;!&ndash;        <p th:text="${entity}">str</p>&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+<!--</div>-->
+
+<!--<div th:if="${collected != null}}">-->
+<!--    <div th:each="entity : ${collected}">-->
+<!--        <p th:text="${entity}">str</p>-->
+<!--    </div>-->
+<!--</div>-->
+
+
+</body>
+</html>

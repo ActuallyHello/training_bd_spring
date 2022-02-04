@@ -139,4 +139,17 @@ public class ConstructorService {
         //sortMapByFKNaturalOrder(); not needed now
         System.out.println(mapEntityAttributesValues);
     }
+
+    public List<String> getEntities() {
+        List<String> list = new ArrayList<>();
+        for (Map.Entry<EntityDB, Map<Attribute, List<String>>> entry : mapEntityAttributesValues.entrySet()) {
+            StringBuilder entitySB = new StringBuilder();
+            entitySB.append("Сущность:").append(entry.getKey().getNameEntity()).append(";");
+            for (Map.Entry<Attribute, List<String>> inner : entry.getValue().entrySet()) {
+                entitySB.append("Атрибут:").append(inner.getKey().getNameAttribute()).append("=").append(inner.getValue()).append(";;;");
+            }
+            list.add(entitySB.toString());
+        }
+        return list;
+    }
 }

@@ -14,61 +14,61 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@Controller
+//@Controller
 public class TestDataInsertionController {
 
-    @GetMapping
-    public List<Person> index() {
-        List<String> names = ExcelData.getTestDataByKey("firstname", 1);
-        List<String> surnames = ExcelData.getTestDataByKey("lastname", 2);
-        List<String> lastnames = ExcelData.getTestDataByKey("middlename", 1);
-
-        List<Person> persons = new ArrayList<>();
-        for (int i = 0; i < surnames.size(); i++) {
-            Person p = new Person();
-            p.surname = surnames.get(i);
-            p.name = names.get(i);
-            p.lastname = lastnames.get(i);
-            persons.add(p);
-        }
-
-        return persons;
-    }
-
-    class Person {
-
-        public String name;
-        public String surname;
-        public String lastname;
-
-        @Override
-        public String toString() {
-            return "person = [" +
-                    surname + " " +
-                    name + " " +
-                    lastname + " " +
-                    "]";
-        }
-    }
-
-    @Autowired
-    private StudentRepo studentRepo;
-
-
-    @GetMapping("/students")
-    public List<Student> getStudents() {
-        return studentRepo.findAll();
-    }
-
-    @PostMapping("/students")
-    public List<Student> addStudent(@RequestParam String student_book,
-                                    @RequestParam String name,
-                                    @RequestParam String surname,
-                                    @RequestParam String major) {
-        System.out.println(student_book + " " + surname);
-        System.out.println("ALOHALO");
-        studentRepo.save(new Student(student_book, surname, name, major));
-
-        return studentRepo.findAll();
-    }
+//    @GetMapping
+//    public List<Person> index() {
+//        List<String> names = ExcelData.getTestDataByKey("firstname", 1);
+//        List<String> surnames = ExcelData.getTestDataByKey("lastname", 2);
+//        List<String> lastnames = ExcelData.getTestDataByKey("middlename", 1);
+//
+//        List<Person> persons = new ArrayList<>();
+//        for (int i = 0; i < surnames.size(); i++) {
+//            Person p = new Person();
+//            p.surname = surnames.get(i);
+//            p.name = names.get(i);
+//            p.lastname = lastnames.get(i);
+//            persons.add(p);
+//        }
+//
+//        return persons;
+//    }
+//
+//    class Person {
+//
+//        public String name;
+//        public String surname;
+//        public String lastname;
+//
+//        @Override
+//        public String toString() {
+//            return "person = [" +
+//                    surname + " " +
+//                    name + " " +
+//                    lastname + " " +
+//                    "]";
+//        }
+//    }
+//
+//    @Autowired
+//    private StudentRepo studentRepo;
+//
+//
+//    @GetMapping("/students")
+//    public List<Student> getStudents() {
+//        return studentRepo.findAll();
+//    }
+//
+//    @PostMapping("/students")
+//    public List<Student> addStudent(@RequestParam String student_book,
+//                                    @RequestParam String name,
+//                                    @RequestParam String surname,
+//                                    @RequestParam String major) {
+//        System.out.println(student_book + " " + surname);
+//        System.out.println("ALOHALO");
+//        studentRepo.save(new Student(student_book, surname, name, major));
+//
+//        return studentRepo.findAll();
+//    }
 }
