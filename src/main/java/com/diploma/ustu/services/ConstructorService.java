@@ -95,6 +95,7 @@ public class ConstructorService {
                 List<String> excel_data = ExcelData.getTestDataByKey(
                         attribute.getNameAttribute().toLowerCase(Locale.ROOT).replaceAll("_.+|\\s.+", ""),
                         0);
+                System.out.println(excel_data);
                 entry.put(attribute, excel_data); // добавляем к атрибуту его значения
             }
         }

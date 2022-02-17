@@ -32,7 +32,7 @@ public class CollectEntitiesWithData {
         return "entities";
     }
 
-    @GetMapping("collected")
+    @GetMapping("collected") // collected?first=5&first=2&first=1 how varargs works
     public String collectedEntity(Model model,
                                   @RequestParam int... first) {
         int i = 0;

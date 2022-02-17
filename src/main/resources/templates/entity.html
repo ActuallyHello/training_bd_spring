@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить сущность и ее атрибуты</title>
+    <script type='text/javascript'>
+        function add() {
+            var container = document.getElementById("container");
+            var div = document.createElement("div");
+            div.id = "inputDIV" + document.getElementsByClassName("nDiv").length;
+            div.className = "nDiv";
+            div.appendChild(document.createTextNode("Название атрибута:    "));
+            var input = document.createElement("input");
+            input.type = "text";
+            input.name = "attributes";
+            input.id = "newAttribute";
+            div.appendChild(input);
+            div.appendChild(document.createElement("br"));
+            div.appendChild(document.createElement("br"));
+            container.appendChild(div);
+        }
+        function remove() {
+            var container = document.getElementById("container");
+            var n = document.getElementsByClassName("nDiv").length - 1;
+            if (n >= 0) {
+                var ggg = document.getElementById("inputDIV"+n);
+                container.removeChild(ggg);
+            }
+        }
+    </script>
+</head>
+<body>
+
+
+<p><h2>Добавить новую сущность</h2></p>
+
+<form action="entity" method="post">
+    <div>
+        <P>Название сущности:    <input name="entity"></P>
+        <br><br>
+        <P>Название атрибута:    <input name="attributes"></P>
+        <br><br>
+        <div id="container"/>
+    </div>
+    <a href="#" id="filldetails" onclick="add()">+++</a>
+    <a href="#" id="filldetails" onclick="remove()">---</a>
+
+    <button>Создать!</button>
+</form>
+
+</body>
+</html>
