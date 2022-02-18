@@ -7,6 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +27,7 @@ class CollectServiceTest {
     EntityDBRepo entityDBRepo;
 
     @Test
-    public void testOneEntity() {
+    public void testCollectEntitiesAndPutThemToFile() throws IOException {
         EntityDB employees = entityDBRepo.findByIdEntity(4L).orElse(null);
         EntityDB company = entityDBRepo.findByIdEntity(5L).orElse(null);
         EntityDB corporation = entityDBRepo.findByIdEntity(6L).orElse(null);
@@ -31,7 +35,10 @@ class CollectServiceTest {
         collectService.collectDataInSingleEntity(employees, 5);
         collectService.collectDataInSingleEntity(company, 3);
         collectService.collectDataInSingleEntity(corporation, 1);
+        collectService.writeToFile("output1.txt");
         collectService.insertIdToFK();
+//        collectService.collectToView();
+        collectService.writeToFile("output2.txt");
     }
 
     @Test
@@ -46,5 +53,10 @@ class CollectServiceTest {
         sizes.add(1);
 
         collectService.collectEntities(list, sizes);
+    }
+
+    @Test
+    public void testFilePath() {
+        System.out.println();
     }
 }

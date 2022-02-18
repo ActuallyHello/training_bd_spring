@@ -9,14 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-/*
-    Собираем сущности из определенной и инсертим тестовые данные из экселя
- */
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -28,6 +25,16 @@ public class CollectService {
     @Autowired
     private AttributeRepo attributeRepo;
 
+    /**
+     *  Маппа которая содержит в себе:
+     *      ключ - сущность из БД
+     *      значение - маппа которая содержит в себе:
+     *              ключ - атрибут определенной сущности из БД
+     *              значение - коллекция данные о каждому атриубте
+     *  Сущность - Сотрудник
+     *      Атрибут - id / Данные - 1, 2, 3
+     *      Атрибут - имя / Данные - Коля, Петя, Вася
+     */
     private final Map<EntityDB, Map<Attribute, List<String>>> entityAttributeMap = new HashMap<>();
 
     //TODO:
@@ -38,6 +45,12 @@ public class CollectService {
         Получаем атрибуты сущности - ключи вложенной мапы. Значения - данные с экселя
         Возвращаем исходную мапу
      */
+
+    /**
+     *
+     * @param entities
+     * @param sizeList
+     */
     public void collectEntities(List<EntityDB> entities, List<Integer> sizeList) {
         for (int i = 0; i < entities.size(); i++) {
             collectDataInSingleEntity(entities.get(i), sizeList.get(i));
@@ -45,6 +58,14 @@ public class CollectService {
         System.out.println(entityAttributeMap);
     }
 
+    /**
+     * Метод заполняющий определенный объект сущности данными из excel
+     * Устанавливает ключ - объект сущности
+     * Все атрибуты сущности устанавливаются в ключ вложенной маппы
+     * Для каждого атрибута из ExcelData возвращает коллекцию строк определенного размера по названию атрибута
+     * @param entity сущность из БД
+     * @param size размер выборки из excel для каждого атрибута
+     */
     public void collectDataInSingleEntity(EntityDB entity, int size) {
         entityAttributeMap.put(entity, new HashMap<>());
         List<Attribute> attributeList = attributeRepo.findAttributeByIdEntity(entity.getIdEntity());
@@ -85,6 +106,19 @@ public class CollectService {
         получаем Company {id company = [1, 2, 3]} Employee {id, fk_company = [1, 2, 3]}
      */
 
+    //TODO:
+    // 1: разбить на функции
+
+
+    /**
+     * Итерируемся по каждому атрибуту определенной сущности в поисках преписки fk
+     * Извлекаем название сущности из имени атрибута (гарантируется, что после преписки fk будет следовать имя сущности на которое fk ссылается)
+     * Итерируемся по всем сущностям в поисках совпадений с извлеченным названием \\ альтернатива сделать запрос в БД по имени сущности
+     * У найденной сущности извлекаем данные принадлежащие атрибуту с препиской id и вставляем их в коллекцию атриубта с fk
+     *  (симулируя прямую ссылку с fk к id)
+     * До метода:               Корпорация - { id = [1], fk_сотрудник = [] }, Сотрудник - {id = [1, 2, 3]}
+     * После выполнения метода: Корпорация - { id = [1], fk_сотрудник = [1, 2, 3] }, Сотрудник - {id = [1, 2, 3]}
+     */
     public void insertIdToFK() {
         for (Map.Entry<EntityDB, Map<Attribute, List<String>>> entryEntity : entityAttributeMap.entrySet()) { // по каждой сущности
             for (Map.Entry<Attribute, List<String>> entryAttribute : entryEntity.getValue().entrySet()) { // по каждому ентри сущности
@@ -106,5 +140,54 @@ public class CollectService {
             }
         }
         System.out.println(entityAttributeMap);
+    }
+
+    /**
+     * Собираем все сущности, их атрибуты и значения атрибутов в отформатированном виде
+     * @return - коллекция значений отображающий результат работы методов
+     */
+    private List<String> collectToView() {
+        List<String> lines = new ArrayList<>();
+        StringBuilder builder = new StringBuilder();
+        boolean onlyForFirstEntity;
+        for (EntityDB entity : entityAttributeMap.keySet()) {
+            builder.append(String.format("Сущность: %12s", entity.getNameEntity())).append(" | ");
+            onlyForFirstEntity = true;
+            for (Map.Entry<Attribute, List<String>> entryAttribute : entityAttributeMap.get(entity).entrySet()) {
+                if (onlyForFirstEntity) {
+                    onlyForFirstEntity = false;
+                } else {
+                    builder.append(String.format("%22s", " ")).append(" | ");
+                }
+                builder.append(String.format("Атрибут: %16s",entryAttribute.getKey().getNameAttribute()))
+                        .append(" | ")
+                        .append(entryAttribute.getValue())
+                        .append("\n");
+
+            }
+            lines.add(builder.toString());
+            builder = new StringBuilder();
+        }
+        return lines;
+    }
+
+    /**
+     * Запись в файл полувшихся данных
+     *
+     * @param whichOne - файл в который будет запись
+     * @throws IOException - исключение :)))
+     */
+
+    public void writeToFile(String whichOne) throws IOException {
+        File output = new File("D:\\ДИПЛОМ\\SpringDiploma\\ustu\\src\\main\\resources\\data\\" + whichOne);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(output))){
+            List<String> lines = collectToView();
+            StringJoiner stringJoiner = new StringJoiner("\n", "[", "]");
+            for (String str : lines) {
+                stringJoiner.add(str);
+            }
+//            System.out.println(stringJoiner.toString());
+            writer.write(stringJoiner.toString());
+        }
     }
 }
