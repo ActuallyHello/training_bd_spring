@@ -16,31 +16,10 @@ class ExcelDataTest {
 
     @Test
     public void testExtractionFromExcel() {
-        List<String> data = ExcelData.getTestDataByKey("id", 1);
+        List<String> data = ExcelData.getTestDataByKey("phone", 30);
         Collections.shuffle(data);
         System.out.println("data = " + data);
-        Person person = new Person();
-        person.name = ExcelData.getTestDataByKey("firstname", 1);
-        person.surname = ExcelData.getTestDataByKey("lastname", 1);
-        person.lastname = ExcelData.getTestDataByKey("middlename", 1);
-        System.out.println(person);
     }
 
-    class Person {
-        public List<String> name;
-        public List<String> surname;
-        public List<String> lastname;
 
-        @Override
-        public String toString() {
-            StringJoiner sj = new StringJoiner(" ", "[", "]");
-            for (int i = 0; i < name.size(); i++) {
-                sj.add(name.get(i));
-                sj.add(lastname.get(i));
-                sj.add(surname.get(i));
-                sj.add(",");
-            }
-            return sj.toString();
-        }
-    }
 }

@@ -13,7 +13,6 @@ import java.util.*;
 
 @Component
 public class ExcelData {
-//    public Map<String, List<String>> getAllData();
 
     // function will return column with key in header
     private static int findColumnWithKey(String key, Sheet sheet) {
@@ -41,7 +40,24 @@ public class ExcelData {
         if (columnIndex == -1) return new ArrayList<>();
         Row row = sheet.getRow(rowIndex);
         while (row != null && row.getCell(columnIndex) != null && rowIndex <= size) {
-            dataList.add(row.getCell(columnIndex).toString());
+            Cell cell = row.getCell(columnIndex);
+            switch (cell.getCellType()) {
+                case STRING:
+                    dataList.add(cell.toString());
+                    break;
+                case NUMERIC:
+                    dataList.add(String.valueOf((int)cell.getNumericCellValue()));
+                    break;
+                case BLANK:
+                    System.out.println("ПУСТОЕ ЗНАЧЕНИЕ EXCEL DATA FROM COLUMN INDEX (" + columnIndex + ") AND ROW INDEX (" + rowIndex + ");"); // поменять на Log
+                    break;
+                case _NONE:
+                    System.out.println("NULL NONE значение EXCEL DATA FROM COLUMN INDEX (" + columnIndex + ") AND ROW INDEX (" + rowIndex + ");");
+                    break;
+                default:
+                    System.out.println("UNKNOW на EXCEL DATA FROM COLUMN INDEX (" + columnIndex + ") AND ROW INDEX (" + rowIndex + ")");
+            }
+//            dataList.add(row.getCell(columnIndex).toString());
             rowIndex++;
             row = sheet.getRow(rowIndex);
         }
@@ -62,18 +78,8 @@ public class ExcelData {
                     sheet, size);
         } catch (IOException ex) {
             System.out.println("NOTHING HERE");
-            //ex.printStackTrace();
+            ex.printStackTrace();
         }
         return dataList;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(getTestDataByKey("имя", 1));
-        System.out.println(getTestDataByKey("сотрудник", 2));
-        System.out.println(getTestDataByKey("ALOHA", 3));
-//        String kok = "id";
-//        String kok2 = "Имя_ывфывф";
-//        System.out.println(kok2.toLowerCase(Locale.ROOT).replaceAll("_.+|\\s.+", ""));
-//        System.out.println(kok.toLowerCase(Locale.ROOT).replaceAll("_.+|\\s.+", ""));
     }
 }

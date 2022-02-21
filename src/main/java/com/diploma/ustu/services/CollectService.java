@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -190,4 +192,46 @@ public class CollectService {
             writer.write(stringJoiner.toString());
         }
     }
+
+
+    // old version just for some reason
+
+
+    /*
+     *  на входе получает сущность, которую ищет в mapEntityAttributeValues
+     *  преобразует результат в stream<Attribute>
+     *  считаем сколько совпадений с 'fk_' или 'fk '
+     */
+//    private int countForeignKeys(EntityDB entityKey) {
+//        return (int) mapEntityAttributesValues.get(entityKey)
+//                .keySet()
+//                .stream()
+//                .map(Attribute::getNameAttribute)
+//                .filter(x -> x.toLowerCase(Locale.ROOT).contains("fk_") ||
+//                        x.toLowerCase(Locale.ROOT).contains("fk "))
+//                .count();
+//    }
+//
+//    /*
+//     * сортируем по возрастанию мапу по условию возрастания количества FK
+//     */
+//    private void sortMapByFKNaturalOrder() {
+//        // https://stackoverflow.com/questions/58998826/java-stream-collect-to-treemap-in-reverse-order
+//        // 4 параметр, который можно кастамизировать под сортировку всей структуры мапы
+//        Supplier<TreeMap<EntityDB, Map<Attribute, List<String>>>> myMapSupplier = () -> new TreeMap<>((o1, o2) -> {
+//            int count_o1 = countForeignKeys(o1);
+//            int count_o2 = countForeignKeys(o2);
+//            return count_o1 - count_o2;
+//        });
+//
+//        mapEntityAttributesValues = mapEntityAttributesValues.entrySet()
+//                .stream()
+//                .collect(Collectors.toMap(
+//                        Map.Entry::getKey,
+//                        Map.Entry::getValue,
+//                        (a, b) -> a,
+//                        myMapSupplier
+//                ));
+//    }
+
 }
