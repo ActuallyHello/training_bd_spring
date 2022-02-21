@@ -4,44 +4,70 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
-@Table(name = "student")
-@Data
-@AllArgsConstructor
+@Table(
+        name = "student",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "student_email_unique", columnNames = "email")
+        }
+)
 @NoArgsConstructor
-@ToString
-@Builder
+@Getter
+@Setter
 public class Student {
 
     @Id
-    @Column(nullable = false, unique = true, length = 6)
+    @Column(name = "student_book", nullable = false, unique = true, length = 6)
     private String studentBook;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "last_name", nullable = false, length = 20)
     private String lastName;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "first_name", nullable = false, length = 20)
     private String firstName;
 
-    @Column(nullable = false, length = 40)
+    @Column(name = "major", nullable = false, length = 40)
     private String major;
 
-    public Student(String studentBook, String lastName, String firstName, String major) {
+    @Column(name = "email", nullable = false, length = 60, unique = true)
+    private String email;
+
+    @OneToMany(
+            mappedBy = "student",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
+    )
+    private List<Model> models;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_userdb")
+    private User user;
+
+    public Student(String studentBook, String lastName, String firstName, String major, String email) {
         this.studentBook = studentBook;
         this.lastName = lastName;
         this.firstName = firstName;
         this.major = major;
+        this.email = email;
     }
 
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER
-    )
-    @JoinColumn(
-            name = "student_book",
-            referencedColumnName = "studentBook"
-    )
-    private List<Model> models;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Student)) return false;
+        Student student = (Student) o;
+        return Objects.equals(getStudentBook(), student.getStudentBook())
+                && Objects.equals(getLastName(), student.getLastName())
+                && Objects.equals(getFirstName(), student.getFirstName())
+                && Objects.equals(getMajor(), student.getMajor())
+                && Objects.equals(getEmail(), student.getEmail());
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(getStudentBook(), getLastName(), getFirstName());
+    }
 }

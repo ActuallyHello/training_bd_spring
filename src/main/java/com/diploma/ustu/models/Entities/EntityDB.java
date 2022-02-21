@@ -6,9 +6,10 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
-@Table(name = "entityof")
+@Table(name = "entity")
 @NoArgsConstructor
 @Getter
 @Setter
@@ -32,14 +33,16 @@ public class EntityDB {
 
 
     @OneToMany(
+            mappedBy = "entityDB",
             cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             orphanRemoval = true
     )
-    @JoinColumn(
-            name = "id_entity"
-    )
     private List<Attribute> attributes;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "id_relation")
+//    private Relation relation;
 
     public EntityDB(String nameEntity) {
         this.nameEntity = nameEntity;
@@ -51,5 +54,18 @@ public class EntityDB {
                 "idEntity=" + idEntity +
                 ", nameEntity='" + nameEntity + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EntityDB)) return false;
+        EntityDB entityDB = (EntityDB) o;
+        return Objects.equals(getIdEntity(), entityDB.getIdEntity()) && Objects.equals(getNameEntity(), entityDB.getNameEntity());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIdEntity(), getNameEntity());
     }
 }

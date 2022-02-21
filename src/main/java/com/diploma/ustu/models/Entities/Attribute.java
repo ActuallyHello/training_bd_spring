@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "attribute")
@@ -26,8 +27,12 @@ public class Attribute {
     @Column(name = "id_attribute")
     private Long idAttribute;
 
-    @Column(name = "name_attribute", length = 50, nullable = false)
+    @Column(name = "name_attribute", length = 60, nullable = false)
     private String nameAttribute;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_entity")
+    private EntityDB entityDB;
 
     public Attribute(String nameAttribute) {
         this.nameAttribute = nameAttribute;
@@ -39,5 +44,18 @@ public class Attribute {
                 "idAttribute=" + idAttribute +
                 ", nameAttribute='" + nameAttribute + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Attribute)) return false;
+        Attribute attribute = (Attribute) o;
+        return Objects.equals(getIdAttribute(), attribute.getIdAttribute()) && Objects.equals(getNameAttribute(), attribute.getNameAttribute());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIdAttribute(), getNameAttribute());
     }
 }

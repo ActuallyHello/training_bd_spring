@@ -1,20 +1,20 @@
 package com.diploma.ustu.repo;
 
-import com.diploma.ustu.models.Entities.UserOf;
+import com.diploma.ustu.models.Entities.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class UserOfRepoTest {
+class UserRepoTest {
 
-    @Autowired
-    UserOfRepo userOfRepo;
+    //@Autowired
+    //UserRepo userOfRepo;
 
     @Test
     public void testAddUser() {
-        UserOf userOf = new UserOf("userof_test2@mail.ru", "555", "USER");
-        userOfRepo.save(userOf);
+//        User user = new User("userof_test2@mail.ru", "555", "USER");
+//        userOfRepo.save(user);
         //userOfRepo.deleteByEmail("userof_test45@mail.ru");
     }
 
@@ -28,7 +28,7 @@ class UserOfRepoTest {
 
     @Test
     public void testFindBy() {
-        System.out.println(userOfRepo.findAllByEmail("userof_test3@mail.ru"));
-        System.out.println(userOfRepo.findEmailByIdUser(252L));
+        //System.out.println(userOfRepo.findAllByEmail("userof_test3@mail.ru"));
+        //System.out.println(userOfRepo.findEmailByIdUser(252L));
     }
 }

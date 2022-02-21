@@ -35,11 +35,11 @@ class ModelRepoTest {
     @Test
     public void testAddingToModel() {
 
-        Model model = Model.builder()
-                .nameModel("ТРЕТЬЯ")
-                .build();
-
-        modelRepo.save(model);
+//        Model model = Model.builder()
+//                .nameModel("ТРЕТЬЯ")
+//                .build();
+//
+//        modelRepo.save(model);
 
 //        Student student = studentRepo.findByStudentBook("111111");
 //        System.out.println(student);

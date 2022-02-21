@@ -30,17 +30,17 @@ class StudentRepoTest {
     @Test
     public void testAddingToStudent() {
 
-        List<Model> models = modelRepo.findAll();
-
-        Student student = Student.builder()
-                .studentBook("444444")
-                .firstName("Антон")
-                .lastName("Лобанов")
-                .major("ИСТ")
-                .models(models)
-                .build();
-
-        studentRepo.save(student);
+//        List<Model> models = modelRepo.findAll();
+//
+//        Student student = Student.builder()
+//                .studentBook("444444")
+//                .firstName("Антон")
+//                .lastName("Лобанов")
+//                .major("ИСТ")
+//                .models(models)
+//                .build();
+//
+//        studentRepo.save(student);
     }
 
     @Test
